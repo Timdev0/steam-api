@@ -1,13 +1,8 @@
-import express from "express";
-import cors from "cors";
-import "dotenv/config";
+import { createApp } from "./app.js";
+import { env } from "./config/env.js";
 
-const app = express();
-app.use(cors());
+const app = createApp();
 
-app.get("/api/health", (_req, res) => {
-  res.json({ status: "ok" });
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server on http://localhost:${PORT}`));
+app.listen(env.port, () =>
+  console.log(`Server on http://localhost:${env.port}`)
+);
