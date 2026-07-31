@@ -2,47 +2,37 @@
 import { ref } from 'vue'
 import { usePlayerStore } from '@/stores/player'
 import { useGamesStore } from '@/stores/games'
+import { useSteamSearch } from '@/composables/useSteamSearch'
 
 const playerStore = usePlayerStore()
 const gamesStore = useGamesStore()
+const { search, resolving, error } = useSteamSearch()
 
-const steamId = ref('')
+const searchInput = ref('')
 const excludeFreeGames = ref(false)
-const error = ref('')
-
-async function search() {
-  const id = steamId.value.trim()
-  if (!id) return
-
-  error.value = ''
-
-  try {
-    await Promise.all([
-      playerStore.loadPlayer(id),
-      gamesStore.loadGames(id, !excludeFreeGames.value),
-    ])
-  } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Erreur inconnue'
-  }
-}
 </script>
 
 <template>
   <main>
-    <h2>Research Steam Profile (steamid64)</h2>
+    <h2>Research Steam Profile</h2>
 
     <div class="search">
       <input
-        v-model="steamId"
-        placeholder="SteamID64 (ex: 76561197960435530)"
-        @keyup.enter="search"
+        v-model="searchInput"
+        placeholder="SteamID64, profile URL, or vanity name"
+        @keyup.enter="search(searchInput, excludeFreeGames)"
       />
       <label class="exclude-free">
         <input type="checkbox" v-model="excludeFreeGames" />
         Exclude free games
       </label>
-      <button @click="search" :disabled="playerStore.isLoading || gamesStore.isLoading">
-        {{ playerStore.isLoading || gamesStore.isLoading ? 'Researching...' : 'Research' }}
+      <button
+        @click="search(searchInput, excludeFreeGames)"
+        :disabled="resolving || playerStore.isLoading || gamesStore.isLoading"
+      >
+        {{
+          resolving || playerStore.isLoading || gamesStore.isLoading ? 'Researching...' : 'Research'
+        }}
       </button>
     </div>
 

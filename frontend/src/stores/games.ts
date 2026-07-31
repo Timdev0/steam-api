@@ -13,10 +13,8 @@ export const useGamesStore = defineStore('games', () => {
 
   // GETTERS
   const filteredGames = computed<PlayerGame[]>(() => {
-    const maxPlaytime = maxPlaytimeFilter.value
-    return maxPlaytime === null
-      ? allGames.value
-      : allGames.value.filter((game) => game.playtime_forever <= maxPlaytime)
+    // TODO
+    return allGames.value
   })
 
   const availableGames = computed<PlayerGame[]>(() => {

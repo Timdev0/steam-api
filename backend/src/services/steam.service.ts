@@ -1,7 +1,39 @@
 import { env } from "../config/env.js";
-import type { GetPlayerSummariesResponse, OwnedGames, OwnedGamesResponse, PlayerSummary } from "../types/steam.js";
+import type { 
+  GetPlayerSummariesResponse,
+  OwnedGames,
+  OwnedGamesResponse,
+  PlayerSummary,
+  ResolveVanityResponse
+} from "../types/steam.js";
+import { parseSteamInput } from "../utils/steam.js";
 
-const STEAM_API = "https://api.steampowered.com";
+const STEAM_API = env.steamApiUrl;
+
+export async function resolveVanityUrl(vanity: string): Promise<string | null> {
+  const url = new URL(`${STEAM_API}/ISteamUser/ResolveVanityURL/v1/`);
+  url.searchParams.set("key", env.steamApiKey);
+  url.searchParams.set("vanityurl", vanity);
+
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`Steam API error: ${res.status}`);
+  }
+
+  const data = (await res.json()) as ResolveVanityResponse;
+  return data.response.success === 1 ? (data.response.steamid ?? null) : null;
+}
+
+export async function resolveSteamId(input: string): Promise<string | null> {
+  const parsed = parseSteamInput(input);
+  if (!parsed) return null;
+
+  // Déjà un SteamID64 → rien à faire, pas d'appel réseau
+  if (parsed.type === "steamid") return parsed.value;
+
+  // Vanity → on interroge Steam
+  return resolveVanityUrl(parsed.value);
+}
 
 export async function getPlayerSummary(
   steamId: string

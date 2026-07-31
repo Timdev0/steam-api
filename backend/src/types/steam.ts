@@ -30,3 +30,10 @@ export interface OwnedGames {
 export interface OwnedGamesResponse {
   response: OwnedGames;
 }
+
+export interface ResolveVanityResponse {
+  response: {
+    steamid?: string;
+    success: number;
+  };
+}
