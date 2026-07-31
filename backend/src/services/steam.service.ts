@@ -1,5 +1,5 @@
 import { env } from "../config/env.js";
-import type { GetPlayerSummariesResponse, OwnedGame, OwnedGamesResponse, PlayerSummary } from "../types/steam.js";
+import type { GetPlayerSummariesResponse, OwnedGames, OwnedGamesResponse, PlayerSummary } from "../types/steam.js";
 
 const STEAM_API = "https://api.steampowered.com";
 
@@ -19,7 +19,7 @@ export async function getPlayerSummary(
   return data.response.players[0] ?? null;
 }
 
-export async function getOwnedGames(steamId: string, includeFreeGames: boolean = true): Promise<OwnedGame[] | null> {
+export async function getOwnedGames(steamId: string, includeFreeGames: boolean = true): Promise<OwnedGames| null> {
   const url = new URL(`${STEAM_API}/IPlayerService/GetOwnedGames/v1/`);
   url.searchParams.set("key", env.steamApiKey);
   url.searchParams.set("steamid", steamId);
@@ -32,5 +32,5 @@ export async function getOwnedGames(steamId: string, includeFreeGames: boolean =
   }
 
   const data = (await res.json()) as OwnedGamesResponse;
-  return data.response.games ?? null;
+  return data.response.games ? data.response : null;
 }

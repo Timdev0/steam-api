@@ -22,9 +22,11 @@ export interface OwnedGame {
   r_time_last_played: number;
 }
 
+export interface OwnedGames {
+  game_count: number;
+  games: OwnedGame[];
+}
+
 export interface OwnedGamesResponse {
-  response: {
-    game_count: number;
-    games: OwnedGame[];
-  }
+  response: OwnedGames;
 }

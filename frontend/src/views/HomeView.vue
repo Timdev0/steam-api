@@ -1,15 +1,21 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { fetchPlayer, type PlayerSummary } from '@/services/steam'
+import { fetchPlayer, fetchPlayerGames } from '@/services/steam'
+import type { PlayerSummary, PlayerGames } from '@/types/steam'
 
 const steamId = ref('')
 const player = ref<PlayerSummary | null>(null)
-const loading = ref(false)
+const playerGames = ref<PlayerGames | null>(null)
+const loadingPlayerSummary = ref(false)
+const loadingPlayerGames = ref(false)
 const error = ref('')
 
 async function search() {
+  player.value = null
+  playerGames.value = null
+
   if (!steamId.value) return
-  loading.value = true
+  loadingPlayerSummary.value = true
   error.value = ''
   player.value = null
 
@@ -18,14 +24,23 @@ async function search() {
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Erreur inconnue'
   } finally {
-    loading.value = false
+    loadingPlayerSummary.value = false
+  }
+
+  try {
+    loadingPlayerGames.value = true
+    playerGames.value = await fetchPlayerGames(steamId.value.trim())
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Erreur inconnue'
+  } finally {
+    loadingPlayerGames.value = false
   }
 }
 </script>
 
 <template>
   <main>
-    <h2>Recherche de joueur Steam</h2>
+    <h2>Research Steam Profile (steamid64)</h2>
 
     <div class="search">
       <input
@@ -33,8 +48,8 @@ async function search() {
         placeholder="SteamID64 (ex: 76561197960435530)"
         @keyup.enter="search"
       />
-      <button @click="search" :disabled="loading">
-        {{ loading ? 'Recherche...' : 'Rechercher' }}
+      <button @click="search" :disabled="loadingPlayerSummary || loadingPlayerGames">
+        {{ loadingPlayerSummary || loadingPlayerGames ? 'Researching...' : 'Research' }}
       </button>
     </div>
 
@@ -44,7 +59,19 @@ async function search() {
       <img :src="player.avatarfull" :alt="player.personaname" />
       <div>
         <h3>{{ player.personaname }}</h3>
-        <a :href="player.profileurl" target="_blank">Voir le profil Steam</a>
+        <a :href="player.profileurl" target="_blank">See steam Profile</a>
+      </div>
+    </div>
+    <div>
+      <h3>Games - {{ playerGames?.game_count ?? 0 }}</h3>
+      <p v-if="loadingPlayerGames">Loading games...</p>
+      <div v-if="playerGames">
+        <h4></h4>
+        <ul>
+          <li v-for="game in playerGames?.games" :key="game.appid">
+            {{ game.name }}
+          </li>
+        </ul>
       </div>
     </div>
   </main>
