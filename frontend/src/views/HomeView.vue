@@ -1,39 +1,28 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { fetchPlayer, fetchPlayerGames } from '@/services/steam'
-import type { PlayerSummary, PlayerGames } from '@/types/steam'
+import { usePlayerStore } from '@/stores/player'
+import { useGamesStore } from '@/stores/games'
+
+const playerStore = usePlayerStore()
+const gamesStore = useGamesStore()
 
 const steamId = ref('')
-const player = ref<PlayerSummary | null>(null)
-const playerGames = ref<PlayerGames | null>(null)
-const loadingPlayerSummary = ref(false)
-const loadingPlayerGames = ref(false)
+const excludeFreeGames = ref(false)
 const error = ref('')
 
 async function search() {
-  player.value = null
-  playerGames.value = null
+  const id = steamId.value.trim()
+  if (!id) return
 
-  if (!steamId.value) return
-  loadingPlayerSummary.value = true
   error.value = ''
-  player.value = null
 
   try {
-    player.value = await fetchPlayer(steamId.value.trim())
+    await Promise.all([
+      playerStore.loadPlayer(id),
+      gamesStore.loadGames(id, !excludeFreeGames.value),
+    ])
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Erreur inconnue'
-  } finally {
-    loadingPlayerSummary.value = false
-  }
-
-  try {
-    loadingPlayerGames.value = true
-    playerGames.value = await fetchPlayerGames(steamId.value.trim())
-  } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Erreur inconnue'
-  } finally {
-    loadingPlayerGames.value = false
   }
 }
 </script>
@@ -48,27 +37,32 @@ async function search() {
         placeholder="SteamID64 (ex: 76561197960435530)"
         @keyup.enter="search"
       />
-      <button @click="search" :disabled="loadingPlayerSummary || loadingPlayerGames">
-        {{ loadingPlayerSummary || loadingPlayerGames ? 'Researching...' : 'Research' }}
+      <label class="exclude-free">
+        <input type="checkbox" v-model="excludeFreeGames" />
+        Exclude free games
+      </label>
+      <button @click="search" :disabled="playerStore.isLoading || gamesStore.isLoading">
+        {{ playerStore.isLoading || gamesStore.isLoading ? 'Researching...' : 'Research' }}
       </button>
     </div>
 
     <p v-if="error" class="error">{{ error }}</p>
 
-    <div v-if="player" class="player">
-      <img :src="player.avatarfull" :alt="player.personaname" />
+    <div v-if="playerStore.player" class="player">
+      <img :src="playerStore.player.avatarfull" :alt="playerStore.player.personaname" />
       <div>
-        <h3>{{ player.personaname }}</h3>
-        <a :href="player.profileurl" target="_blank">See steam Profile</a>
+        <h3>{{ playerStore.player.personaname }}</h3>
+        <a :href="playerStore.player.profileurl" target="_blank">See steam Profile</a>
       </div>
     </div>
+
     <div>
-      <h3>Games - {{ playerGames?.game_count ?? 0 }}</h3>
-      <p v-if="loadingPlayerGames">Loading games...</p>
-      <div v-if="playerGames">
-        <h4></h4>
+      <h3>Games - {{ gamesStore.filteredGames.length }}</h3>
+      <p v-if="gamesStore.isLoading">Loading games...</p>
+      <div v-else>
+        <p v-if="gamesStore.filteredGames.length === 0">No games found.</p>
         <ul>
-          <li v-for="game in playerGames?.games" :key="game.appid">
+          <li v-for="game in gamesStore.filteredGames" :key="game.appid">
             {{ game.name }}
           </li>
         </ul>
