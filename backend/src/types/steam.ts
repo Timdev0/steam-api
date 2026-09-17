@@ -19,7 +19,7 @@ export interface OwnedGame {
   img_icon_url: string;
   img_logo_url: string;
   has_community_visible_stats: boolean;
-  r_time_last_played: number;
+  rtime_last_played: number;
 }
 
 export interface OwnedGames {

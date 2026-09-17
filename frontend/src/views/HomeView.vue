@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { usePlayerStore } from '@/stores/player'
 import { useGamesStore } from '@/stores/games'
 import { useSteamSearch } from '@/composables/useSteamSearch'
+import GameCard from '@/components/GameCard.vue'
 
 const playerStore = usePlayerStore()
 const gamesStore = useGamesStore()
@@ -51,10 +52,8 @@ const excludeFreeGames = ref(false)
       <p v-if="gamesStore.isLoading">Loading games...</p>
       <div v-else>
         <p v-if="gamesStore.filteredGames.length === 0">No games found.</p>
-        <ul>
-          <li v-for="game in gamesStore.filteredGames" :key="game.appid">
-            {{ game.name }}
-          </li>
+        <ul class="games-list">
+          <GameCard v-for="game in gamesStore.filteredGames" :key="game.appid" :game="game" />
         </ul>
       </div>
     </div>
@@ -77,5 +76,13 @@ const excludeFreeGames = ref(false)
   gap: 1rem;
   align-items: center;
   margin-top: 1.5rem;
+}
+
+.games-list {
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 2rem;
 }
 </style>
