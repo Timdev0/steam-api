@@ -13,6 +13,7 @@
 
 <script setup lang="ts">
 import { useGamesStore } from '@/stores/games'
+import GameCard from '@/components/GameCard.vue'
 
 import { storeToRefs } from 'pinia'
 const gamesStore = useGamesStore()
