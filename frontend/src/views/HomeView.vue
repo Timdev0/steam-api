@@ -3,7 +3,8 @@ import { ref } from 'vue'
 import { usePlayerStore } from '@/stores/player'
 import { useGamesStore } from '@/stores/games'
 import { useSteamSearch } from '@/composables/useSteamSearch'
-import GameCard from '@/components/GameCard.vue'
+import GameList from '@/components/GameList.vue'
+import PlayerCard from '@/components/PlayerCard.vue'
 
 const playerStore = usePlayerStore()
 const gamesStore = useGamesStore()
@@ -39,24 +40,8 @@ const excludeFreeGames = ref(false)
 
     <p v-if="error" class="error">{{ error }}</p>
 
-    <div v-if="playerStore.player" class="player">
-      <img :src="playerStore.player.avatarfull" :alt="playerStore.player.personaname" />
-      <div>
-        <h3>{{ playerStore.player.personaname }}</h3>
-        <a :href="playerStore.player.profileurl" target="_blank">See steam Profile</a>
-      </div>
-    </div>
-
-    <div>
-      <h3>Games - {{ gamesStore.filteredGames.length }}</h3>
-      <p v-if="gamesStore.isLoading">Loading games...</p>
-      <div v-else>
-        <p v-if="gamesStore.filteredGames.length === 0">No games found.</p>
-        <ul class="games-list">
-          <GameCard v-for="game in gamesStore.filteredGames" :key="game.appid" :game="game" />
-        </ul>
-      </div>
-    </div>
+    <PlayerCard />
+    <GameList />
   </main>
 </template>
 
@@ -69,20 +54,5 @@ const excludeFreeGames = ref(false)
 
 .error {
   color: #ff6b6b;
-}
-
-.player {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  margin-top: 1.5rem;
-}
-
-.games-list {
-  padding: 0;
-  margin: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-  gap: 2rem;
 }
 </style>
