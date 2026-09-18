@@ -40,7 +40,7 @@ const excludeFreeGames = ref(false)
 
     <p v-if="error" class="error">{{ error }}</p>
 
-    <PlayerCard />
+    <!-- <PlayerCard /> -->
     <GameList />
   </main>
 </template>
