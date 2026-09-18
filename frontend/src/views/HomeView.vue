@@ -6,6 +6,7 @@ import { useSteamSearch } from '@/composables/useSteamSearch'
 import GameList from '@/components/GameList.vue'
 // import PlayerCard from '@/components/PlayerCard.vue'
 import SearchPlayer from '@/components/SearchPlayer.vue'
+import Gameroulette from '@/components/Gameroulette.vue'
 
 const playerStore = usePlayerStore()
 const gamesStore = useGamesStore()
@@ -24,6 +25,7 @@ const isBusy = computed(
     <p v-if="error" class="error">{{ error }}</p>
 
     <!-- <PlayerCard /> -->
+    <Gameroulette />
     <GameList />
   </main>
 </template>

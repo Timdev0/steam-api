@@ -3,26 +3,40 @@ import { ref, computed } from 'vue'
 import type { PlayerGame } from '@/types/steam'
 import { fetchPlayerGames } from '@/services/steam'
 
+type RouletteScope = 'all' | 'never-played' | 'under-5h'
+
 export const useGamesStore = defineStore('games', () => {
   // STATE
   const allGames = ref<PlayerGame[]>([])
   const pickHistory = ref<PlayerGame[]>([])
   const includeFreeGames = ref(true)
-  const maxPlaytimeFilter = ref<number | null>(null)
+  const rouletteScope = ref<RouletteScope>('all')
   const isLoading = ref(false)
 
   // GETTERS
   const filteredGames = computed<PlayerGame[]>(() => {
-    // TODO
+    // affichage de la liste (TODO: free games un jour)
     return allGames.value
   })
 
-  const availableGames = computed<PlayerGame[]>(() => {
-    const pickedAppIds = new Set(pickHistory.value.map((game) => game.appid))
-    return filteredGames.value.filter((game) => !pickedAppIds.has(game.appid))
+  const rouletteEligibleGames = computed<PlayerGame[]>(() => {
+    switch (rouletteScope.value) {
+      case 'never-played':
+        return filteredGames.value.filter((g) => g.playtime_forever === 0)
+      case 'under-5h':
+        return filteredGames.value.filter((g) => g.playtime_forever < 300)
+      case 'all':
+      default:
+        return filteredGames.value
+    }
   })
 
-  //ACTIONS
+  const availableGames = computed<PlayerGame[]>(() => {
+    const pickedAppIds = new Set(pickHistory.value.map((g) => g.appid))
+    return rouletteEligibleGames.value.filter((g) => !pickedAppIds.has(g.appid))
+  })
+
+  // ACTIONS
   async function loadGames(steamId: string, freeGames = true) {
     isLoading.value = true
     try {
@@ -47,12 +61,16 @@ export const useGamesStore = defineStore('games', () => {
     resetHistory()
   }
 
-  function pickRandom() {
-    // TODO
+  function setRouletteScope(scope: RouletteScope) {
+    rouletteScope.value = scope
   }
 
-  function pickRandNeverPlayed() {
-    // TODO
+  function pickRandom(): PlayerGame | null {
+    const pool = availableGames.value
+    if (pool.length === 0) return null
+    const game = pool[Math.floor(Math.random() * pool.length)]!
+    pickHistory.value.push(game)
+    return game
   }
 
   function resetHistory() {
@@ -64,18 +82,17 @@ export const useGamesStore = defineStore('games', () => {
     allGames,
     pickHistory,
     includeFreeGames,
-    maxPlaytimeFilter,
+    rouletteScope,
     isLoading,
-
     // GETTERS
     filteredGames,
+    rouletteEligibleGames,
     availableGames,
-
     // ACTIONS
     loadGames,
     setGames,
+    setRouletteScope,
     pickRandom,
-    pickRandNeverPlayed,
     resetHistory,
     reset,
   }

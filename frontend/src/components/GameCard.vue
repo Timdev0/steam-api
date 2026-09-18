@@ -6,11 +6,9 @@
 
     <div class="game-card__body">
       <div class="game-card__head">
-        <img
-          class="game-card__icon"
+        <img class="game-card__icon"
           :src="`https://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.img_icon_url}.jpg`"
-          :alt="game.name"
-        />
+          :alt="game.name" />
         <span class="game-card__name">{{ game.name }}</span>
       </div>
 
@@ -32,20 +30,30 @@
 import type { PlayerGame } from '@/types/steam'
 import { formatLastPlayed } from '@/utils/lastPlayed'
 import { formatPlaytime } from '@/utils/playtime'
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 const props = defineProps<{
   game: PlayerGame
 }>()
 
 const PLACEHOLDER = '/placeholder-game.svg'
-const headerSrc = ref(
-  `https://cdn.cloudflare.steamstatic.com/steam/apps/${props.game.appid}/header.jpg`,
-)
+const hasError = ref(false)
 
+const headerSrc = computed(() =>
+  hasError.value
+    ? PLACEHOLDER
+    : `https://cdn.cloudflare.steamstatic.com/steam/apps/${props.game.appid}/header.jpg`,
+)
 function onHeaderError() {
-  headerSrc.value = PLACEHOLDER
+  hasError.value = true
 }
+
+watch(
+  () => props.game.appid,
+  () => {
+    hasError.value = false
+  },
+)
 </script>
 
 <style scoped lang="scss">
@@ -119,6 +127,7 @@ function onHeaderError() {
     .label {
       opacity: 0.6;
     }
+
     .value {
       font-weight: 600;
       color: $accent;
