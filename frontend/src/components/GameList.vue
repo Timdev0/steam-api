@@ -2,12 +2,10 @@
   <section>
     <h3>Games - {{ filteredGames.length }}</h3>
     <p v-if="isLoading">Loading games...</p>
-    <div v-else>
-      <p v-if="filteredGames.length === 0">No games found.</p>
-      <ul class="games-list">
+      <ul v-else class="games-list">
+        <p v-if="filteredGames.length === 0">No games found.</p>
         <GameCard v-for="game in filteredGames" :key="game.appid" :game="game" />
       </ul>
-    </div>
   </section>
 </template>
 
@@ -23,7 +21,7 @@ const { filteredGames, isLoading } = storeToRefs(gamesStore)
 
 <style lang="scss" scoped>
 .games-list {
-  padding: 0;
+  padding: 1rem 0;
   margin: 0;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
