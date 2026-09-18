@@ -32,7 +32,7 @@ function onSearch() {
           Exclude free games
         </label>
         <BaseButton type="submit" :disabled="disabled">
-          {{ disabled ? 'Researching...' : 'Research' }}
+          {{ disabled ? 'Searching...' : 'Search' }}
         </BaseButton>
 
         <BaseButton variant="secondary">

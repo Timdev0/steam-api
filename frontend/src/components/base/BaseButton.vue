@@ -32,20 +32,20 @@ defineProps<{
   }
 
   &--primary {
-    background-color: #66c0f4;
+    background-color: $accent;
     color: #1b2838;
 
     &:hover:not(:disabled) {
-      background-color: #8ed0f7;
+      background-color: $accent-light;
     }
   }
 
   &--secondary {
-    background-color: #2a475e;
-    color: #c7d5e0;
+    background-color: $bg-light;
+    color: $text;
 
     &:hover:not(:disabled) {
-      background-color: #375a75;
+      background-color: $bg-dark;
     }
   }
 }

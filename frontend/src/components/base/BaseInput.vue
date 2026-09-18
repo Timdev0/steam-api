@@ -19,20 +19,20 @@ defineProps<{
 <style scoped lang="scss">
 .base-input {
   padding: 0.6rem 0.9rem;
-  border: 1px solid #2a475e;
+  border: 1px solid $bg-light;
   border-radius: 6px;
-  background-color: #1b2838;
-  color: #c7d5e0;
+  background-color: $bg;
+  color: $text;
   font-size: 1rem;
   width: 100%;
 
   &::placeholder {
-    color: #66788a;
+    color: $accent-dark;
   }
 
   &:focus {
     outline: none;
-    border-color: #66c0f4;
+    border-color: $accent;
   }
 }
 </style>
