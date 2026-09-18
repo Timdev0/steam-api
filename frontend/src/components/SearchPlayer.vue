@@ -34,10 +34,6 @@ function onSearch() {
         <BaseButton type="submit" :disabled="disabled">
           {{ disabled ? 'Searching...' : 'Search' }}
         </BaseButton>
-
-        <BaseButton variant="secondary">
-          Pick random
-        </BaseButton>
       </div>
     </form>
   </section>
