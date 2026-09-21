@@ -9,7 +9,7 @@ import { resolveRouter } from "./routes/resolve.routes.js";
 export function createApp() {
   const app = express();
 
-  app.use(cors({ origin: env.frontendUrl }));
+  app.use(cors({ origin: env.frontendUrls }));
   app.use(express.json());
 
   app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
