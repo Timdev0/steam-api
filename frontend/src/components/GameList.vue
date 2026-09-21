@@ -5,13 +5,13 @@ import { useGamesStore } from '@/stores/games'
 import GameCard from '@/components/GameCard.vue'
 
 const gamesStore = useGamesStore()
-const { filteredGames, isLoading } = storeToRefs(gamesStore)
+const { allGames, isLoading } = storeToRefs(gamesStore)
 
 type SortKey = 'name-asc' | 'name-desc' | 'playtime-asc' | 'playtime-desc'
 const sortBy = ref<SortKey>('name-asc')
 
 const sortedGames = computed(() => {
-  const games = [...filteredGames.value]
+  const games = [...allGames.value]
 
   switch (sortBy.value) {
     case 'name-asc':
@@ -31,7 +31,7 @@ const sortedGames = computed(() => {
 <template>
   <section>
     <div class="games-header">
-      <h3>Games - {{ filteredGames.length }}</h3>
+      <h3>Games - {{ allGames.length }}</h3>
       <select v-model="sortBy" class="sort-select">
         <option value="name-asc">Name (A-Z)</option>
         <option value="name-desc">Name (Z-A)</option>
@@ -62,6 +62,7 @@ const sortedGames = computed(() => {
   margin: 0;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  justify-items: center;
   gap: 2rem;
 }
 </style>

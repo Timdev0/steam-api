@@ -36,9 +36,6 @@ const tabs = [
         <GameList v-else />
       </template>
     </BaseTabs>
-
-    <!-- <GameRoulette />
-    <GameList /> -->
   </main>
 </template>
 

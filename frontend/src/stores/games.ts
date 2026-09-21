@@ -12,22 +12,18 @@ export const useGamesStore = defineStore('games', () => {
   const includeFreeGames = ref(true)
   const rouletteScope = ref<RouletteScope>('all')
   const isLoading = ref(false)
+  const rouletteCurrentGame = ref<PlayerGame | null>(null)
 
   // GETTERS
-  const filteredGames = computed<PlayerGame[]>(() => {
-    // list display (TODO: handle free games one day)
-    return allGames.value
-  })
-
   const rouletteEligibleGames = computed<PlayerGame[]>(() => {
     switch (rouletteScope.value) {
       case 'never-played':
-        return filteredGames.value.filter((g) => g.playtime_forever === 0)
+        return allGames.value.filter((g) => g.playtime_forever === 0)
       case 'under-5h':
-        return filteredGames.value.filter((g) => g.playtime_forever < 300)
+        return allGames.value.filter((g) => g.playtime_forever < 300)
       case 'all':
       default:
-        return filteredGames.value
+        return allGames.value
     }
   })
 
@@ -53,7 +49,7 @@ export const useGamesStore = defineStore('games', () => {
 
   function setGames(games: PlayerGame[]) {
     allGames.value = games
-    pickHistory.value = []
+    resetHistory()
   }
 
   function reset() {
@@ -70,11 +66,13 @@ export const useGamesStore = defineStore('games', () => {
     if (pool.length === 0) return null
     const game = pool[Math.floor(Math.random() * pool.length)]!
     pickHistory.value.push(game)
+    rouletteCurrentGame.value = game
     return game
   }
 
   function resetHistory() {
     pickHistory.value = []
+    rouletteCurrentGame.value = null
   }
 
   return {
@@ -83,9 +81,9 @@ export const useGamesStore = defineStore('games', () => {
     pickHistory,
     includeFreeGames,
     rouletteScope,
+    rouletteCurrentGame,
     isLoading,
     // GETTERS
-    filteredGames,
     rouletteEligibleGames,
     availableGames,
     // ACTIONS
