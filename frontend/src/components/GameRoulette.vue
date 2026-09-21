@@ -109,6 +109,14 @@ const scopes = [
     display: flex;
     gap: 0.5rem;
     margin: 1rem 0;
+    flex-direction: row-reverse;
+
+    @include respond(tablet) {
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
   }
 
   &__results {
