@@ -23,7 +23,7 @@ export function useSteamSearch() {
 
       await Promise.all([playerStore.loadPlayer(id), gamesStore.loadGames(id, !excludeFreeGames)])
     } catch (e) {
-      error.value = e instanceof Error ? e.message : 'Erreur inconnue'
+      error.value = e instanceof Error ? e.message : 'Unknown error'
     } finally {
       resolving.value = false
     }

@@ -4,9 +4,8 @@ import { usePlayerStore } from '@/stores/player'
 import { useGamesStore } from '@/stores/games'
 import { useSteamSearch } from '@/composables/useSteamSearch'
 import GameList from '@/components/GameList.vue'
-// import PlayerCard from '@/components/PlayerCard.vue'
 import SearchPlayer from '@/components/SearchPlayer.vue'
-import Gameroulette from '@/components/Gameroulette.vue'
+import GameRoulette from '@/components/GameRoulette.vue'
 
 const playerStore = usePlayerStore()
 const gamesStore = useGamesStore()
@@ -24,8 +23,7 @@ const isBusy = computed(
 
     <p v-if="error" class="error">{{ error }}</p>
 
-    <!-- <PlayerCard /> -->
-    <Gameroulette />
+    <GameRoulette />
     <GameList />
   </main>
 </template>

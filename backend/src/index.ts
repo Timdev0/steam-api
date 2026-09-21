@@ -3,6 +3,4 @@ import { env } from "./config/env.js";
 
 const app = createApp();
 
-app.listen(env.port, () =>
-  console.log(`Server on http://localhost:${env.port}`)
-);
+app.listen(env.port, () => console.log(`Server on http://localhost:${env.port}`));

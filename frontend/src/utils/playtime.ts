@@ -1,7 +1,7 @@
 /**
- * Formate un temps de jeu (en minutes, tel que renvoyé par Steam).
- * - Moins d'une heure : affiché en minutes (ex: "45 min")
- * - Une heure ou plus : affiché en heures entières, sans décimales (ex: "124h")
+ * Formats a playtime duration (in minutes, as returned by Steam).
+ * - Under one hour: shown in minutes (e.g. "45 min")
+ * - One hour or more: shown as whole hours, no decimals (e.g. "124h")
  */
 export function formatPlaytime(minutes: number): string {
   if (minutes < 60) {

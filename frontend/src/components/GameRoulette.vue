@@ -8,15 +8,15 @@ import GameCard from './GameCard.vue'
 
 const gamesStore = useGamesStore()
 
-// état + getters réactifs
+// reactive state + getters
 const { pickHistory, availableGames, rouletteScope, allGames } = storeToRefs(gamesStore)
-// actions (accès direct)
+// actions (direct access)
 const { pickRandom, setRouletteScope, resetHistory } = gamesStore
 
-// le dernier jeu tiré, mis en avant
+// the last picked game, highlighted
 const lastPick = ref<PlayerGame | null>(null)
 
-// peut-on encore tirer ?
+// can we still pick one?
 const canPick = computed(() => availableGames.value.length > 0)
 
 function onPick() {
@@ -29,7 +29,7 @@ function onClear() {
   lastPick.value = null
 }
 
-// options de scope pour les radios
+// scope options for the radio buttons
 const scopes = [
   { value: 'all', label: 'All games' },
   { value: 'never-played', label: 'Never played' },

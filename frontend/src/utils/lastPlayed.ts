@@ -1,12 +1,12 @@
 /**
- * Formate un timestamp Unix (en secondes, tel que renvoyé par Steam
- * dans rtime_last_played) en date lisible.
+ * Formats a Unix timestamp (in seconds, as returned by Steam in
+ * rtime_last_played) into a readable date.
  */
 export function formatLastPlayed(timestamp: number): string {
-  // Jamais joué : Steam renvoie 0
+  // Never played: Steam returns 0
   if (!timestamp) return 'Never played'
 
-  // Steam donne des secondes → JS attend des millisecondes
+  // Steam gives seconds → JS expects milliseconds
   const date = new Date(timestamp * 1000)
 
   return date.toLocaleDateString('en-GB', {

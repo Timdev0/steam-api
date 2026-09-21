@@ -1,12 +1,10 @@
-type ParsedInput =
-  | { type: "steamid"; value: string }
-  | { type: "vanity"; value: string };
+type ParsedInput = { type: "steamid"; value: string } | { type: "vanity"; value: string };
 
 export function parseSteamInput(input: string): ParsedInput | null {
   const trimmed = input.trim();
   if (!trimmed) return null;
 
-  // SteamID64 brut (17 chiffres)
+  // Raw SteamID64 (17 digits)
   if (/^\d{17}$/.test(trimmed)) {
     return { type: "steamid", value: trimmed };
   }
@@ -23,6 +21,6 @@ export function parseSteamInput(input: string): ParsedInput | null {
     return { type: "vanity", value: vanityMatch[1] };
   }
 
-  // Sinon : vanity tapé directement
+  // Otherwise: a vanity name typed directly
   return { type: "vanity", value: trimmed };
 }

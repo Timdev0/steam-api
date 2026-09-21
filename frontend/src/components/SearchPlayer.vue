@@ -7,7 +7,7 @@ const emit = defineEmits<{
   search: [input: string, excludeFreeGames: boolean]
 }>()
 
-const props = defineProps<{
+defineProps<{
   disabled?: boolean
   busyLabel?: string
 }>()
@@ -32,7 +32,7 @@ function onSearch() {
           Exclude free games
         </label>
         <BaseButton type="submit" :disabled="disabled">
-          {{ disabled ? 'Searching...' : 'Search' }}
+          {{ disabled ? (busyLabel ?? 'Searching...') : 'Search' }}
         </BaseButton>
       </div>
     </form>

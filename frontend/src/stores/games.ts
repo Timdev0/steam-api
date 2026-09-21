@@ -15,7 +15,7 @@ export const useGamesStore = defineStore('games', () => {
 
   // GETTERS
   const filteredGames = computed<PlayerGame[]>(() => {
-    // affichage de la liste (TODO: free games un jour)
+    // list display (TODO: handle free games one day)
     return allGames.value
   })
 

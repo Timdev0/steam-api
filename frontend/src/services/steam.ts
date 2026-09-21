@@ -4,7 +4,7 @@ export async function resolveSteamId(input: string): Promise<string> {
   const res = await fetch(`/api/resolve?input=${encodeURIComponent(input)}`)
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
-    throw new Error(err.error ?? `Erreur ${res.status}`)
+    throw new Error(err.error ?? `Error ${res.status}`)
   }
   const data = await res.json()
   return data.steamId
@@ -14,7 +14,7 @@ export async function fetchPlayer(steamId: string): Promise<PlayerSummary> {
   const res = await fetch(`/api/player/${steamId}`)
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
-    throw new Error(err.error ?? `Erreur ${res.status}`)
+    throw new Error(err.error ?? `Error ${res.status}`)
   }
   return res.json()
 }
@@ -32,7 +32,7 @@ export async function fetchPlayerGames(
   const res = await fetch(url)
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
-    throw new Error(err.error ?? `Erreur ${res.status}`)
+    throw new Error(err.error ?? `Error ${res.status}`)
   }
   return res.json()
 }

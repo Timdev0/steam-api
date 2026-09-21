@@ -6,9 +6,12 @@
 
     <div class="game-card__body">
       <div class="game-card__head">
-        <img class="game-card__icon"
-          :src="`https://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.img_icon_url}.jpg`"
-          :alt="game.name" />
+        <img
+          class="game-card__icon"
+          :src="iconSrc"
+          :alt="game.name"
+          @error="onIconError"
+        />
         <span class="game-card__name">{{ game.name }}</span>
       </div>
 
@@ -37,21 +40,32 @@ const props = defineProps<{
 }>()
 
 const PLACEHOLDER = '/placeholder-game.svg'
-const hasError = ref(false)
+const PLACEHOLDER_ICON = '/placeholder-icon.svg'
+const headerHasError = ref(false)
+const iconHasError = ref(false)
 
 const headerSrc = computed(() =>
-  hasError.value
+  headerHasError.value
     ? PLACEHOLDER
     : `https://cdn.cloudflare.steamstatic.com/steam/apps/${props.game.appid}/header.jpg`,
 )
+const iconSrc = computed(() =>
+  iconHasError.value
+    ? PLACEHOLDER_ICON
+    : `https://media.steampowered.com/steamcommunity/public/images/apps/${props.game.appid}/${props.game.img_icon_url}.jpg`,
+)
 function onHeaderError() {
-  hasError.value = true
+  headerHasError.value = true
+}
+function onIconError() {
+  iconHasError.value = true
 }
 
 watch(
   () => props.game.appid,
   () => {
-    hasError.value = false
+    headerHasError.value = false
+    iconHasError.value = false
   },
 )
 </script>
