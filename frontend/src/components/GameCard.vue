@@ -1,16 +1,16 @@
 <template>
   <li class="game-card">
     <div class="game-card__header">
-      <img :src="headerSrc" :alt="game.name" @error="onHeaderError" />
+      <GameBanner :appid="game.appid" :alt="game.name" />
     </div>
 
     <div class="game-card__body">
       <div class="game-card__head">
-        <img
+        <GameIcon
           class="game-card__icon"
-          :src="iconSrc"
+          :appid="game.appid"
+          :img-icon-url="game.img_icon_url"
           :alt="game.name"
-          @error="onIconError"
         />
         <span class="game-card__name">{{ game.name }}</span>
       </div>
@@ -33,41 +33,12 @@
 import type { PlayerGame } from '@/types/steam'
 import { formatLastPlayed } from '@/utils/lastPlayed'
 import { formatPlaytime } from '@/utils/playtime'
-import { ref, computed, watch } from 'vue'
+import GameBanner from './GameBanner.vue'
+import GameIcon from './GameIcon.vue'
 
-const props = defineProps<{
+defineProps<{
   game: PlayerGame
 }>()
-
-const PLACEHOLDER = '/placeholder-game.svg'
-const PLACEHOLDER_ICON = '/placeholder-icon.svg'
-const headerHasError = ref(false)
-const iconHasError = ref(false)
-
-const headerSrc = computed(() =>
-  headerHasError.value
-    ? PLACEHOLDER
-    : `https://cdn.cloudflare.steamstatic.com/steam/apps/${props.game.appid}/header.jpg`,
-)
-const iconSrc = computed(() =>
-  iconHasError.value
-    ? PLACEHOLDER_ICON
-    : `https://media.steampowered.com/steamcommunity/public/images/apps/${props.game.appid}/${props.game.img_icon_url}.jpg`,
-)
-function onHeaderError() {
-  headerHasError.value = true
-}
-function onIconError() {
-  iconHasError.value = true
-}
-
-watch(
-  () => props.game.appid,
-  () => {
-    headerHasError.value = false
-    iconHasError.value = false
-  },
-)
 </script>
 
 <style scoped lang="scss">
@@ -79,7 +50,8 @@ watch(
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background-color: $bg-light;
-  height: 100%;
+  flex: 1;
+  max-width: 460px;
 
   &__header {
     height: auto;

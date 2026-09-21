@@ -33,7 +33,7 @@ defineProps<{
 
   &--primary {
     background-color: $accent;
-    color: #1b2838;
+    color: $bg;
 
     &:hover:not(:disabled) {
       background-color: $accent-light;
