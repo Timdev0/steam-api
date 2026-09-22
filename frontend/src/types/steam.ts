@@ -20,3 +20,22 @@ export interface PlayerGames {
   game_count: number
   games: PlayerGame[]
 }
+
+export interface InventoryItem {
+  assetId: string
+  classId: string
+  name: string
+  marketHashName: string
+  iconUrl: string
+  amount: number
+  tradable: boolean
+  marketable: boolean
+}
+
+export interface PlayerInventory {
+  steamId: string
+  appId: number
+  contextId: number
+  totalCount: number
+  items: InventoryItem[]
+}

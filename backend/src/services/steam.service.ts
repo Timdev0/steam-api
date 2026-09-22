@@ -97,9 +97,13 @@ export async function getInventory(
   const cached = inventoryCache.get(cacheKey);
   if (cached !== undefined) return cached;
 
+  // No query params: Steam's own pagination params (`count`, `start_assetid`)
+  // are known to intermittently 400 on this endpoint for many accounts,
+  // and `l` (language) isn't needed either — omitted, it just defaults to
+  // English. Without them Steam returns the whole inventory in one shot,
+  // which covers every real CS2 inventory (a handful of thousand items at
+  // most for context 2). Revisit only if an inventory ever gets truncated.
   const url = new URL(`https://steamcommunity.com/inventory/${steamId}/${appId}/${contextId}`);
-  url.searchParams.set("l", "english");
-  url.searchParams.set("count", "5000");
 
   const data = await steamFetch<RawInventoryResponse | null>(url);
 

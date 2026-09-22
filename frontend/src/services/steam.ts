@@ -1,4 +1,4 @@
-import type { PlayerGames, PlayerSummary } from '@/types/steam'
+import type { PlayerGames, PlayerInventory, PlayerSummary } from '@/types/steam'
 
 // Unset in dev: relative /api calls go through Vite's proxy (vite.config.ts).
 // Set in production builds to the deployed backend's URL.
@@ -34,6 +34,15 @@ export async function fetchPlayerGames(
   const url = `${API_BASE_URL}/api/player/${steamId}/games${query ? `?${query}` : ''}`
 
   const res = await fetch(url)
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err.error ?? `Error ${res.status}`)
+  }
+  return res.json()
+}
+
+export async function fetchPlayerInventory(steamId: string, game: string): Promise<PlayerInventory> {
+  const res = await fetch(`${API_BASE_URL}/api/player/${steamId}/inventory/${game}`)
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
     throw new Error(err.error ?? `Error ${res.status}`)
