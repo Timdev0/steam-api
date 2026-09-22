@@ -7,6 +7,7 @@ import GameList from '@/components/GameList.vue'
 import SearchPlayer from '@/components/SearchPlayer.vue'
 import GameRoulette from '@/components/GameRoulette.vue'
 import BaseTabs from '@/components/base/BaseTabs.vue'
+import GameStats from '@/components/GameStats.vue'
 
 const playerStore = usePlayerStore()
 const gamesStore = useGamesStore()
@@ -20,6 +21,7 @@ const activeTab = ref('games')
 const tabs = [
   { value: 'games', label: 'Games List' },
   { value: 'roulette', label: 'Roulette' },
+  { value: 'stats', label: 'Stats' }
 ]
 
 </script>
@@ -33,7 +35,8 @@ const tabs = [
     <BaseTabs v-model="activeTab" :tabs="tabs">
       <template #default="{ active }">
         <GameRoulette v-if="active === 'roulette'" />
-        <GameList v-else />
+        <GameList v-else-if="active === 'games'" />
+        <GameStats v-else-if="active === 'stats'" />
       </template>
     </BaseTabs>
   </main>
