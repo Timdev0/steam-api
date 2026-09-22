@@ -3,9 +3,12 @@ import { SteamApiError } from "../errors/SteamApiError.js";
 import { createTtlCache } from "../utils/cache.js";
 import type {
   GetPlayerSummariesResponse,
+  InventoryItem,
   OwnedGames,
   OwnedGamesResponse,
+  PlayerInventory,
   PlayerSummary,
+  RawInventoryResponse,
   ResolveVanityResponse,
 } from "../types/steam.js";
 import { parseSteamInput } from "../utils/steam.js";
@@ -16,6 +19,7 @@ const STEAM_API = env.steamApiUrl.replace(/\/$/, "");
 const CACHE_TTL_MS = 5 * 60_000;
 const playerCache = createTtlCache<PlayerSummary | null>(CACHE_TTL_MS);
 const ownedGamesCache = createTtlCache<OwnedGames | null>(CACHE_TTL_MS);
+const inventoryCache = createTtlCache<PlayerInventory>(CACHE_TTL_MS);
 
 async function steamFetch<T>(url: URL): Promise<T> {
   const res = await fetch(url);
@@ -79,5 +83,66 @@ export async function getOwnedGames(
   const data = await steamFetch<OwnedGamesResponse>(url);
   const result = data.response.games ? data.response : null;
   ownedGamesCache.set(cacheKey, result);
+  return result;
+}
+
+// Steam's community inventory endpoint needs no API key, unlike the rest
+// of this service — it's a separate, unauthenticated public API.
+export async function getInventory(
+  steamId: string,
+  appId: number,
+  contextId: number,
+): Promise<PlayerInventory> {
+  const cacheKey = `${steamId}:${appId}:${contextId}`;
+  const cached = inventoryCache.get(cacheKey);
+  if (cached !== undefined) return cached;
+
+  const url = new URL(`https://steamcommunity.com/inventory/${steamId}/${appId}/${contextId}`);
+  url.searchParams.set("l", "english");
+  url.searchParams.set("count", "5000");
+
+  const data = await steamFetch<RawInventoryResponse | null>(url);
+
+  // A private (or empty) inventory never triggers an HTTP error: Steam
+  // returns 200 with a literal `null` body, or { success: 0, Error }.
+  if (!data || !data.success) {
+    throw new SteamApiError(
+      data?.error ?? data?.Error ?? "Inventory is private or unavailable",
+      403,
+    );
+  }
+
+  const descriptionByKey = new Map(
+    (data.descriptions ?? []).map((d) => [`${d.classid}_${d.instanceid}`, d]),
+  );
+
+  const items: InventoryItem[] = (data.assets ?? []).flatMap((asset) => {
+    const description = descriptionByKey.get(`${asset.classid}_${asset.instanceid}`);
+    // Steam occasionally references a classid with no matching
+    // description; skip it rather than showing a broken item.
+    if (!description) return [];
+    return [
+      {
+        assetId: asset.assetid,
+        classId: asset.classid,
+        name: description.name,
+        marketHashName: description.market_hash_name,
+        iconUrl: description.icon_url,
+        amount: Number(asset.amount),
+        tradable: description.tradable === 1,
+        marketable: description.marketable === 1,
+      },
+    ];
+  });
+
+  const result: PlayerInventory = {
+    steamId,
+    appId,
+    contextId,
+    totalCount: data.total_inventory_count ?? items.length,
+    items,
+  };
+
+  inventoryCache.set(cacheKey, result);
   return result;
 }
