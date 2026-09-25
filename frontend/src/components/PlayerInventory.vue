@@ -48,7 +48,6 @@ watch(
     padding: 1rem 0;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-    justify-items: center;
     gap: 2rem;
 
     &__item {

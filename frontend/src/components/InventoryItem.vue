@@ -1,11 +1,9 @@
 <template>
   <div class="item">
     <img class="item__image" :src="getInventoryItemImageUrl(item.iconUrl)" :alt="item.name" />
-    <div class="item__desc">
-      <p class="item__name" :title="item.marketHashName">{{ item.marketHashName }}
-        <span v-if="item.count > 1"> - x{{item.count }}</span>
-      </p>
-    </div>
+    <p class="item__name" :title="item.marketHashName">{{ item.marketHashName }}
+      <span v-if="item.count > 1"> - x{{ item.count }}</span>
+    </p>
 
   </div>
 </template>
@@ -28,6 +26,7 @@ const props = defineProps<{
   background-color: $bg-light;
   border-radius: 0.5rem;
   padding: 0.75rem;
+  justify-content: space-between;
 
   &__image {
     width: 100%;
@@ -42,10 +41,6 @@ const props = defineProps<{
   }
 
   &__name {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
     overflow: hidden;
   }
 }
