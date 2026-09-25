@@ -11,7 +11,7 @@
 <script setup lang="ts">
 import { getInventoryItemImageUrl } from '@/utils/inventory'
 import type { GroupedInventoryItem } from '@/utils/inventory'
-const props = defineProps<{
+defineProps<{
   item: GroupedInventoryItem
 }>()
 
