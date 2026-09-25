@@ -16,8 +16,6 @@ const { inventories, isLoading } = storeToRefs(inventoryStore)
 
 const groupedItems = computed(() => groupInventoryItems(inventories.value[GAME]?.items ?? []))
 
-console.log('groupedItems', groupedItems.value)
-
 watch(
   () => player.value?.steamid,
   (steamId) => {
@@ -52,6 +50,7 @@ watch(
 
     &__item {
       list-style: none;
+
     }
   }
 }
